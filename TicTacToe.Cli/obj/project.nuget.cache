@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "qTlxPYpHC+8=",
+  "success": true,
+  "projectFilePath": "C:\\MyData\\Trainings\\Cursor\\CaseStudy\\Classic-Games\\intermediate\\TicTacToe.Cli\\TicTacToe.Cli.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\933607\\.nuget\\packages\\microsoft.netcore.app.ref\\8.0.19\\microsoft.netcore.app.ref.8.0.19.nupkg.sha512",
+    "C:\\Users\\933607\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\8.0.19\\microsoft.windowsdesktop.app.ref.8.0.19.nupkg.sha512",
+    "C:\\Users\\933607\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\8.0.19\\microsoft.aspnetcore.app.ref.8.0.19.nupkg.sha512",
+    "C:\\Users\\933607\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\8.0.19\\microsoft.netcore.app.host.win-x64.8.0.19.nupkg.sha512"
+  ],
+  "logs": []
+}
