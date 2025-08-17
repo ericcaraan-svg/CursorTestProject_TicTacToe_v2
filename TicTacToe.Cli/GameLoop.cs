@@ -32,7 +32,7 @@ public class GameLoop
             if (status != GameStatus.InProgress)
             {
                 Render(_board);
-                Console.WriteLine($"Game Over! {status}");
+                Console.WriteLine($"Game Over! {GetGameStatusMessage(status)}");
                 break;
             }
             
@@ -51,7 +51,7 @@ public class GameLoop
             if (status != GameStatus.InProgress)
             {
                 Render(_board);
-                Console.WriteLine($"Game Over! {status}");
+                Console.WriteLine($"Game Over! {GetGameStatusMessage(status)}");
                 break;
             }
         }
@@ -163,5 +163,17 @@ public class GameLoop
         Console.WriteLine("   └───┴───┴───┘");
         Console.WriteLine($"Current Player: {b.CurrentPlayer}");
         Console.WriteLine();
+    }
+    
+    private static string GetGameStatusMessage(GameStatus status)
+    {
+        return status switch
+        {
+            GameStatus.XWins => "Human wins!",
+            GameStatus.OWins => "Bot wins!",
+            GameStatus.Draw => "It's a draw!",
+            GameStatus.InProgress => "Game in progress",
+            _ => status.ToString()
+        };
     }
 } 
