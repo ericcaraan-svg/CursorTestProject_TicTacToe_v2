@@ -149,7 +149,24 @@ public class GameLoop
                     _ => " ? "
                 };
                 
-                Console.Write(symbol);
+                // Color code only the X and O symbols
+                switch (cell)
+                {
+                    case Cell.X:
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.Write(symbol);
+                        Console.ResetColor();
+                        break;
+                    case Cell.O:
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Write(symbol);
+                        Console.ResetColor();
+                        break;
+                    default:
+                        Console.Write(symbol);
+                        break;
+                }
+                
                 if (col < 2) Console.Write("│");
             }
             Console.WriteLine("│");
@@ -176,4 +193,6 @@ public class GameLoop
             _ => status.ToString()
         };
     }
+    
+
 } 
