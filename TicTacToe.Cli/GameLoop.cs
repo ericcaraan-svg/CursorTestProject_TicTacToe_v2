@@ -40,7 +40,7 @@ public class GameLoop
             Console.WriteLine("Bot is thinking...");
             
             // Add a delay after showing "Bot is thinking..." so user can see both moves
-            await Task.Delay(2000);
+            await Task.Delay(1000);
             
             ProcessBotMove();
             
