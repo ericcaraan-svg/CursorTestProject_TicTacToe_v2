@@ -59,7 +59,14 @@ public class GameLoop
     
     private bool ProcessHumanMove()
     {
-        Console.Write("Enter row,col (1-3,1-3) or 'q' to quit: ");
+        if (_board.Phase == GamePhase.Placement)
+        {
+            Console.Write($"Enter row,col (1-3,1-3) to place piece {_board.CurrentPlayer} or 'q' to quit: ");
+        }
+        else
+        {
+            Console.Write($"Enter fromRow,fromCol,toRow,toCol to move piece {_board.CurrentPlayer} or 'q' to quit: ");
+        }
         var input = Console.ReadLine();
         
         if (string.Equals(input, "q", StringComparison.OrdinalIgnoreCase)) 
@@ -80,36 +87,78 @@ public class GameLoop
                     throw new FormatException("Input cannot be null");
                 }
                 
-                // Parse input (expecting format: "row,col")
+                // Parse input based on game phase
                 var parts = input.Split(',');
-                if (parts.Length != 2)
+                
+                if (_board.Phase == GamePhase.Placement)
                 {
-                    throw new FormatException("Please enter coordinates in format: row,col (e.g., 2,2)");
+                    // Placement phase: expect "row,col"
+                    if (parts.Length != 2)
+                    {
+                        throw new FormatException("Please enter coordinates in format: row,col (e.g., 2,2)");
+                    }
+                    
+                    if (!int.TryParse(parts[0].Trim(), out int row) || !int.TryParse(parts[1].Trim(), out int col))
+                    {
+                        throw new FormatException("Please enter valid numbers for row and column");
+                    }
+                    
+                    // Validate range (1-3)
+                    if (row < 1 || row > 3 || col < 1 || col > 3)
+                    {
+                        throw new ArgumentException("Row and column must be between 1 and 3");
+                    }
+                    
+                    // Create and apply the placement move
+                    var move = new Move(row, col, Cell.X, MoveType.Place);
+                    _board = _board.Apply(move);
+                    moveApplied = true;
+                    
+                    Console.WriteLine($"Piece placed at: ({row},{col})");
                 }
-                
-                if (!int.TryParse(parts[0].Trim(), out int row) || !int.TryParse(parts[1].Trim(), out int col))
+                else
                 {
-                    throw new FormatException("Please enter valid numbers for row and column");
+                    // Movement phase: expect "fromRow,fromCol,toRow,toCol"
+                    if (parts.Length != 4)
+                    {
+                        throw new FormatException("Please enter coordinates in format: fromRow,fromCol,toRow,toCol (e.g., 1,1,2,2)");
+                    }
+                    
+                    if (!int.TryParse(parts[0].Trim(), out int fromRow) || 
+                        !int.TryParse(parts[1].Trim(), out int fromCol) ||
+                        !int.TryParse(parts[2].Trim(), out int toRow) || 
+                        !int.TryParse(parts[3].Trim(), out int toCol))
+                    {
+                        throw new FormatException("Please enter valid numbers for all coordinates");
+                    }
+                    
+                    // Validate range (1-3)
+                    if (fromRow < 1 || fromRow > 3 || fromCol < 1 || fromCol > 3 ||
+                        toRow < 1 || toRow > 3 || toCol < 1 || toCol > 3)
+                    {
+                        throw new ArgumentException("All coordinates must be between 1 and 3");
+                    }
+                    
+                    // Create and apply the movement move
+                    var move = new Move(toRow, toCol, Cell.X, MoveType.Move, fromRow, fromCol);
+                    _board = _board.Apply(move);
+                    moveApplied = true;
+                    
+                    Console.WriteLine($"Piece moved from ({fromRow},{fromCol}) to ({toRow},{toCol})");
                 }
-                
-                // Validate range (1-3)
-                if (row < 1 || row > 3 || col < 1 || col > 3)
-                {
-                    throw new ArgumentException("Row and column must be between 1 and 3");
-                }
-                
-                // Create and apply the move
-                var move = new Move(row, col, Cell.X);
-                _board = _board.Apply(move);
-                moveApplied = true;
-                
-                Console.WriteLine($"Move applied: ({row},{col})");
             }
             catch (Exception ex)
             {
                 Render(_board);
                 Console.WriteLine($"Error: {ex.Message}");            
-                Console.Write("Please try again (row,col format): ");
+                if (_board.Phase == GamePhase.Placement)
+                {
+                    Console.Write("Please try again (row,col format): ");
+                }
+                else
+                {
+                    Console.Write("Please try again (fromRow,fromCol,toRow,toCol format): ");
+                }
                 input = Console.ReadLine();
                 
                 if (input == null || string.Equals(input, "q", StringComparison.OrdinalIgnoreCase)) 
@@ -127,7 +176,15 @@ public class GameLoop
     {
         var botMove = _bot.ChooseMove(_board);
         _board = _board.Apply(botMove);
-        Console.WriteLine($"Bot moved: ({botMove.Row},{botMove.Col})");
+        
+        if (botMove.Type == MoveType.Place)
+        {
+            Console.WriteLine($"Bot placed piece at: ({botMove.Row},{botMove.Col})");
+        }
+        else
+        {
+            Console.WriteLine($"Bot moved piece from ({botMove.FromRow},{botMove.FromCol}) to ({botMove.Row},{botMove.Col})");
+        }
     }
     
     private static void Render(Board b)
@@ -179,6 +236,9 @@ public class GameLoop
         
         Console.WriteLine("   └───┴───┴───┘");
         Console.WriteLine($"Current Player: {b.CurrentPlayer}");
+        Console.WriteLine($"Game Phase: {b.Phase}");
+        Console.WriteLine($"Human pieces: {b.HumanPiecesPlaced}/3");
+        Console.WriteLine($"Bot pieces: {b.BotPiecesPlaced}/3");
         Console.WriteLine();
     }
     
