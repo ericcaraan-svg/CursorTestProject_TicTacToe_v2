@@ -26,9 +26,20 @@ public class HeuristicBot : IBotStrategy
     /// <summary>
     /// Chooses a placement move during the placement phase.
     /// </summary>
-    private Move ChoosePlacementMove(Board board)
-    {
-        // 1. Check if bot can win in one move
+    	private Move ChoosePlacementMove(Board board)
+	{
+		// If this is the bot's first move and center is taken, pick a random empty cell
+		if (board.BotPiecesPlaced == 0 && board[1, 1] != Cell.Empty)
+		{
+			var empties = board.GetEmptyCells().ToList();
+			if (empties.Any())
+			{
+				var randomCell = empties[Random.Shared.Next(empties.Count)];
+				return new Move(randomCell.r + 1, randomCell.c + 1, Cell.O, MoveType.Place);
+			}
+		}
+
+		// 1. Check if bot can win in one move
         var winningMove = FindWinningMove(board, Cell.O);
         if (winningMove.HasValue)
         {

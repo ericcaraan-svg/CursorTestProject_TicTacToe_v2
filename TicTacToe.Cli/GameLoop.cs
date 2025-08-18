@@ -150,7 +150,9 @@ public class GameLoop
             catch (Exception ex)
             {
                 Render(_board);
-                Console.WriteLine($"Error: {ex.Message}");            
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"Error: {ex.Message}");
+                Console.ResetColor();
                 if (_board.Phase == GamePhase.Placement)
                 {
                     Console.Write("Please try again (row,col format): ");
@@ -189,6 +191,7 @@ public class GameLoop
     
     private static void Render(Board b)
     {
+        Console.Clear();
         Console.WriteLine("\n     1   2   3");
         Console.WriteLine("   ┌───┬───┬───┐");
         
